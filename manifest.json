@@ -1,0 +1,43 @@
+{
+  "name": "Littledata Shopify Connection Debugger",
+  "description" : "When enabled, this extension will read data from the current tab upon page load to check for the existence and consistency of variables relating to the Littledata Shopify connection, and report any errors or mismatches encountered.",
+  "manifest_version": 2,
+  "version": "0.1",
+  "permissions" : ["activeTab", "*://*/*", "storage", "declarativeContent"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.start.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.idle.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "page_action": {
+    "default_icon" : {
+      "16" : "images/icon-grey-16.png",
+      "32" : "images/icon-grey-32.png",
+      "48" : "images/icon-grey-48.png",
+      "64" : "images/icon-grey-64.png",
+      "128" : "images/icon-grey-128.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "Littledata Shopify Connection Debugger"
+  },
+  "icons" : {
+    "16" : "images/icon-grey-16.png",
+    "32" : "images/icon-grey-32.png",
+    "48" : "images/icon-grey-48.png",
+    "64" : "images/icon-grey-64.png",
+    "128" : "images/icon-grey-128.png"
+  }
+}

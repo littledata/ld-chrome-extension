@@ -1,0 +1,40 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.wrapper {
+  margin: 0px;
+  max-height: 600px;
+  overflow: hidden;
+  padding: 0px;
+  width: 400px;
+}
+
+.bg-littledata { background: color: #0FA69D; }
+
+#no-padding{
+ padding: 0px;
+ margin: 0px;
+}
+
+.card-image{ width: 40%; }
+
+
+#exTab1 .tab-content {
+  color : white;
+  background-color: #428bca;
+  padding : 5px 15px;
+}
+
+#exTab1 .nav-pills > li > a {
+  border-radius: 0;
+}
+
+.img-responsive {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.text-white { color: #FFF; }
