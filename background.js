@@ -71,14 +71,23 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
   if ((msg.from === 'content') && (msg.subject === 'changeExtensionIcon')) {
     console.log("Tab ID: " + sender.tab.id + " | Mode: " + msg.mode);
     if (msg.mode) {
-      chrome.pageAction.setIcon({ tabId: sender.tab.id, path : 'images/icon-green-48.png' }, () => {});
+      chrome.pageAction.setIcon({ tabId: sender.tab.id, path : 'images/icon-green-128.png' }, () => {});
     } else {
-      chrome.pageAction.setIcon({ tabId: sender.tab.id, path : 'images/icon-grey-48.png' }, () => {});
+      chrome.pageAction.setIcon({ tabId: sender.tab.id, path : 'images/icon-grey-128.png' }, () => {});
     }
   }
 
   if ((msg.from === 'content') && (msg.subject === 'analysePageData')) {
-    console.log('Recevied analyse request');
+    let data = msg.data;
+    if (!data.GAClientID) {
+      console.log('Background: GA ID value does not exist in page data');
+      chrome.pageAction.setIcon({ tabId: sender.tab.id, path : 'images/icon-red-128.png' }, () => {});
+    } else {
+      if (data.GAClientID.length <= 0) {
+      console.log('Background: GA ID value was not found in page data / cookies');
+        chrome.pageAction.setIcon({ tabId: sender.tab.id, path : 'images/icon-red-128.png' }, () => {});
+      }
+    }
   }
   
   
