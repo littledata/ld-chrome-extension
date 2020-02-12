@@ -1,11 +1,5 @@
 chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' });
 
-//Values from content.start.js
-console.log('Has LittledataLayer: ' + pageCheckData.hasLittledataLayer);
-console.log('Has GA Client ID: ' + pageCheckData.hasGAClientID);
-console.log('GA Client ID: ' + pageCheckData.GAClientID);
-
-
 /**************************************************
  * PAGE ACTION AND LOCAL STORAGE STATE MANAGEMENT *
  **************************************************/
@@ -20,7 +14,7 @@ function clearActiveState() {
 function restoreActiveState() {
   console.log('Restoring active Littledata Debug state');
    chrome.runtime.sendMessage({ from: 'content', subject: 'changeExtensionIcon', mode: true });
-   chrome.runtime.sendMessage({ from: 'content', subject: 'analysePageData', data: pageCheckData });
+   chrome.runtime.sendMessage({ from: 'content', subject: 'analysePageData', data: pageData });
 }
 
 function beginActiveState() {

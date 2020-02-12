@@ -42,7 +42,10 @@ chrome.pageAction.onClicked.addListener(function(tab) {
     //First initialisation of the state in the local storage
     if(result.state == null) {
       //All we need to do is mark the extension's status as disabled.
-      chrome.storage.local.set({ state: false });
+      chrome.storage.local.set({
+        state: false,
+        pageLog : []
+      });
     } else if (result.state == false) {
       //User currently has the extension disabled.
       clearActiveState();
