@@ -1,6 +1,6 @@
 {
-  "name": "Littlebug for Shopify Connection",
-  "description" : "When enabled, this extension will read data from the current tab upon page load to check for the existence and consistency of variables relating to the Littledata Shopify connection, and report any errors or mismatches encountered.",
+  "name": "Littledata Shopify Connection Debugger",
+  "description" : "Debug common problems with Littledata's Shopify app setup",
   "manifest_version": 2,
   "version": "0.1",
   "permissions" : ["activeTab", "*://*/*", "storage", "declarativeContent"],
