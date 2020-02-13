@@ -1,6 +1,10 @@
 var enabled = false; //disabled by default
 var checkboxExtensionEnabled = document.getElementById('toggle-ext-active');
 
+document.addEventListener('DOMContentLoaded', function() {
+  chrome.runtime.sendMessage({ from: 'popup', subject: 'pageActionClicked' });
+});
+
 chrome.storage.local.get('state', data => {
   enabled = !!data.state;
   if (enabled) {
@@ -12,7 +16,7 @@ chrome.storage.local.get('state', data => {
 checkboxExtensionEnabled.onclick = () => {
   enabled = !enabled;
   chrome.storage.local.set({ state : enabled });
-  chrome.extension.getBackgroundPage().console.log("Extension enabled: " + enabled);
+  chrome.extension.getBackgroundPage().console.log('Littledata Shopify Connection Debugger has been ' + ((enabled) ? 'switched ON' : 'switched OFF'));
   chrome.tabs.query({
     active: true,
     currentWindow: true

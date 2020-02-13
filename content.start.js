@@ -8,48 +8,28 @@
   to inject some code onto the active tab's page and do all the gathering work here.
   Values defined or populated via this script are available for content.idle.js to read and edit, though.
  */
- 
-console.log('running content.start.js');
-
-//Initialise debug log
-var pageLog = [];
-chrome.storage.local.get('pageLog', function(result) {
-  console.log('Restoring page log');
-  pageLog = JSON.parse(result.pageLog);
-  console.log(pageLog);
-});
-
-//Initialise page data object
-var pageData = {
-  href : window.location.href || '',
-  Littledata : {
-    hasLittledataLayer : false,
-    hasTrackingTag : false,
-    hasGATrackerJS : false,
-    hasSegmentTrackerJS : false,
-    hasCarthookTrackerJS : false,
-    version : '',
-    webPropertyID : ''
-  },
-  CookieID : '',
-  ClientID : '',
-  CartClientID : '',
-  Scripts  : {
-    classic : false,
-    universal : false,
-    doubleclick : false,
-    gtag : false,
-    gtm : false
-  }
-};
 
 chrome.storage.local.get('state', function(result){
-  //Only execute script is extension is enabled on the page:
-  if(result.state) {
+  if(result.state == null) {
+    initDisabledState();
+  } else if (result.state == false) {
+    initDisabledState();
+  } if(result.state == true) {
+    initActiveState();
     injectContentScriptJS();
     initPageDataContentListener();
   }
 });
+ 
+//Page render with extension active state == false
+function initDisabledState() {
+   chrome.runtime.sendMessage({ from: 'content', subject: 'changeExtensionIcon', mode: false });
+}
+
+//Page render with extension active state == true
+function initActiveState() {
+   chrome.runtime.sendMessage({ from: 'content', subject: 'changeExtensionIcon', mode: true });
+}
 
 function injectContentScriptJS() {
   let injectCode = `
@@ -158,7 +138,7 @@ function injectContentScriptJS() {
       try {
         let xhr = new XMLHttpRequest();
         let googleClientID;
-        xhr.open('GET', '/cart.js');
+        xhr.open('GET', '/cart.js', false);
 
         xhr.onreadystatechange = function (oEvent) {
           if (xhr.readyState === 4) {
@@ -186,7 +166,7 @@ function injectContentScriptJS() {
         };
         xhr.send();
       } catch(err) {
-        console.error('aargh');
+        console.error("Littlebug XHR error: ",err.message);
       }
       
       return data;
@@ -209,15 +189,12 @@ function injectContentScriptJS() {
   script.parentNode.removeChild(script)  
 }
 
-function assignCurrentPageDataToLocalStorage(data) {
-  console.log('saving page data: ',pageLog);
-  pageLog.push(data);
-  chrome.storage.local.set({ 'currentPageData' : JSON.stringify(data), 'pageLog' : JSON.stringify(pageLog) });
-}
-
 function initPageDataContentListener() {
+  let pageLog = [];
+  chrome.storage.local.get('pageLog', function(result) { pageLog = JSON.parse(result.pageLog); });
+  
   window.addEventListener("setLittledataPageData", function(data) {
-    //Set the current page data in local storage:
-    assignCurrentPageDataToLocalStorage(data.detail);
+    pageLog.push(data.detail); //add current page's data to the log
+    chrome.runtime.sendMessage({ from: 'content', subject: 'savePageLogData', data: JSON.stringify(pageLog) });
   }, false);
 }
