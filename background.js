@@ -9,16 +9,16 @@ INSTALLATION AND UPDATE DETECTION
    count as an 'update' status rather than a new installation.
  */
 chrome.runtime.onInstalled.addListener(function(details) {
- if(details.reason == "install") {
+ if(details.reason === 'install') {
    //New installation - open a new tab to our help guide.
-   console.log("This is a first install!");
-   chrome.tabs.create({url: "https://www.littledata.io/"}, function (tab) {
-     console.log("Opened help guide on https://www.littledata.io/");
+   console.log('This is a first install!');
+   chrome.tabs.create({url: 'https://www.littledata.io/'}, function (tab) {
+     console.log('Opened help guide on https://www.littledata.io/');
    });
- } else if(details.reason == "update") {
+ } else if(details.reason === 'update') {
    //Version update, just drop a note in the console for now..
    var thisVersion = chrome.runtime.getManifest().version;
-   console.log("Updated from " + details.previousVersion + " to " + thisVersion + "!");
+   console.log('Updated from ' + details.previousVersion + ' to ' + thisVersion + '!');
  }
 });
 
@@ -27,13 +27,16 @@ PAGE ACTION STATE MANAGEMENT
 ***************************************/
 
 function enableExtension(sender) {
+  //Initialise the error log as the UI depends on its presence
+  chrome.storage.local.set({ 'errorLog': JSON.stringify([]) });
+
   //Turn on the extension
-  setIconStateEnabled(sender.tab.id)
+  setIconStateEnabled(sender.tab.id);
 }
 
 function disableExtension(sender) {
   //Turn off the extension
-  setIconStateDisabled(sender.tab.id)
+  setIconStateDisabled(sender.tab.id);
   clearLocalStorageContent();
 }
 
@@ -65,12 +68,15 @@ VALIDATING PAGE DATA
 ***************************************/
 
 function analyseLogData(tabID) {
-  var pageLog = [];
+  let pageLog = [];
+  let errorLog = [];
   chrome.storage.local.get('pageLog', function(result) {
     pageLog = JSON.parse(result.pageLog);
     if (pageLog.length > 0) {
-      if (pageLog.length == 1) {
-        analysePage(pageLog[0], tabID, false);
+      if (pageLog.length === 1) {
+        let errors = analysePage(pageLog[0], tabID, false);
+        errorLog.push(errors);
+        chrome.storage.local.set({ 'errorLog': JSON.stringify(errorLog) });
       } else {
         analyseAllPages(pageLog, tabID);
       }
@@ -78,122 +84,170 @@ function analyseLogData(tabID) {
   });
 }
 
-function analysePage(page, tabID, bIsJourneyStart) {
+function analysePage(page, tabID, bIsJourneyStart, index = 0) {
   
   let prefix = (bIsJourneyStart) ? 'Start URL: ' : 'URL: ';
   let bPageErrors = false;
+  let errors = {
+    step: index,
+    url: page.href,
+    messages : []
+  };
 
-  let clientLen = (typeof(page.ClientID == 'string')) ? page.ClientID.length : 0;
-  let cookieLen = (typeof(page.CookieID == 'string')) ? page.CookieID.length : 0;
-  let cartJSLen = (typeof(page.CartClientID == 'string')) ? page.CartClientID.length : 0;
-
+  let clientLen = typeof page.ClientID === "string" ? page.ClientID.length : 0;
+  let cookieLen = typeof page.CookieID === "string" ? page.CookieID.length : 0;
+  let cartJSLen = typeof page.CartClientID === 'string' ? page.CartClientID.length : 0;
   
   //CHECK 1 : Is the LittledataLayer missing?
   if (!page.Littledata.hasLittledataLayer) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is missing LittledataLayer!', 'color: #600');
+    errors.messages.push({
+      code : 'LDE01',
+      message : 'LittledataLayer object is missing.'
+    });
   }
   
   //CHECK 2 : Is the Littledata Tracking Tag missing?
   if (!page.Littledata.hasTrackingTag) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is missing Littledata Tracking Tag', 'color: #600');
+    errors.messages.push({
+      code: 'LDE02',
+      message: 'Littledata Tracking Tag is missing.'
+    });
   }
   
   //CHECK 3 : Is one of our scripts active?
   if (!(page.Littledata.hasGATrackerJS || page.Littledata.hasSegmentTrackerJS || page.Littledata.hasCarthookTrackerJS)) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is missing Littledata Tracking JS script(s)', 'color: #600');
+    errors.messages.push({
+      code: 'LDE03',
+      message: 'Littledata Tracking JS is missing.'
+    });
   }
   
   //CHECK 4 : Is the app version out of date?
   if (page.Littledata.version !== 'v8.0.5') {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is not using the latest app version. Page is using version ' + page.Littledata.version, 'color: #600');
+    errors.messages.push({
+      code: 'LDE04',
+      message: 'Littledata app version is out of date (v' + + page.Littledata.version + ').'
+    });
   }
   
   //CHECK 5 : Is the Client ID missing?
   if (clientLen <= 0) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is missing Client ID from Global GA tracker.', 'color: #600');
+    errors.messages.push({
+      code: 'LDE05',
+      message: 'Missing Client ID from Global GA tracker.'
+    });
   }
   
   //CHECK 6 : Is the Cookie ID missing?
   if (cookieLen <= 0) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is missing Client ID from _ga Cookie.', 'color: #600');
+    errors.messages.push({
+      code: 'LDE06',
+      message: 'Missing Client ID from _ga cookie.'
+    });
   }
   
   //CHECK 7 : Is the Client ID missing from the Cart data?
   if (cartJSLen <= 0) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' is missing Client ID from cart.js data.', 'color: #600');
+    errors.messages.push({
+      code: 'LDE07',
+      message: 'Missing Client ID from cart.js data.'
+    });
   }
   
   //CHECK 8 : Do any of the client IDs have mismatches?
   if (clientLen > 0 && cookieLen > 0) {
     if (page.ClientID !== page.CookieID) {
       bPageErrors = true;
-      console.log('%c' + prefix + page.href + ' has mismatched values for Client ID and _ga Cookie Client ID.', 'color: #600');
+      errors.messages.push({
+        code: 'LDE08A',
+        message: 'Client ID does not match _ga Cookie ID.'
+      });
     }
   }
 
   if (clientLen > 0 && cartJSLen > 0) {
     if (page.ClientID !== page.CartClientID) {
       bPageErrors = true;
-      console.log('%c' + prefix + page.href + ' has mismatched values for Client ID and cart.js Client ID.', 'color: #600');
+      errors.messages.push({
+        code: 'LDE08B',
+        message: 'Client ID does not match cart.js ID.'
+      });
     }
   }
 
   if (cartJSLen > 0 && cookieLen > 0) {
     if (page.CartClientID !== page.CookieID) {
       bPageErrors = true;
-      console.log('%c' + prefix + page.href + ' has mismatched values for cart.js Client ID and _ga Cookie Client ID.', 'color: #600');
+      errors.messages.push({
+        code: 'LDE08C',
+        message: '_ga Cookie ID does not match cart.js ID.'
+      });
     }
   }
   
   //CHECK 9 : Missing GA Tracking ID
   if (!page.Littledata.webPropertyID.length) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' may be missing its Google Analytics Web Property ID (e.g.: UA-XXXXXX-X) in the tracking tag.', 'color: #600');
+    errors.messages.push({
+      code: 'LDE09A',
+      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.'
+    });
+    console.log('%c' + prefix + page.href + '', 'color: #600');
   } else if (page.Littledata.webPropertyID.length <= 0) {
     bPageErrors = true;
-    console.log('%c' + prefix + page.href + ' has no Google Analytics Web Property ID (e.g.: UA-XXXXXX-X) in the tracking tag.', 'color: #600');
+    errors.messages.push({
+      code: 'LDE09B',
+      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) has not been set.'
+    });
   }
-  
   
   //If any errors were encountered, update the Page Action to the red warning icon
   if (bPageErrors) {
     setIconStateError(tabID);
-  } else {
-    console.log('%c' + prefix + page.href + ' has no Littledata tracking issues!','color: #060;');
   }
+
+  return errors;
 }
 
 function analyseAllPages(pageLog, tabID) {
   let bPageErrors = false;
   let firstPage = pageLog[0];
+  let errorLog = [];
   
-  //Skip the first page as that's done in the call above.
   for (var i = 0; i < pageLog.length; i++) {
+    //Retrieve page info and run its self-contained checks first
     page = pageLog[i];
-    analysePage(page, tabID, (i == 0) ? true : false);
+    let errors = analysePage(page, tabID, (i === 0) ? true : false, i);
     
-    //Checks for all pages except first one (comparing data integrity)
+    //Compare all pages after the first to check the values haven't changed
     if (i > 0) {
       
       //COMPARE CHECK 1 : Do the Client IDs match?
       if (page.ClientID !== firstPage.ClientID) {
         bPageErrors = true;
-        console.log('%cURL: ' + page.href + ' has a different client ID to the first page of the recorded journey (Current: ' + page.ClientID + ' | First: ' + firstPage.ClientID + ').', 'color: #600');
+        errors.messages.push({
+          code: 'LDV01',
+          message: 'Page Client ID does not match Client ID of first step (Current: ' + page.ClientID + ' | First: ' + firstPage.ClientID + ').'
+        });
       }
     }
+
+    errorLog.push(errors);
   }
 
+  //Store our log data, this contains step info for the UI, even if there aren't any issues
+  chrome.storage.local.set({ 'errorLog': JSON.stringify(errorLog) });
+
+  //On-page Errors are picked up in analysePage, but if our compare checks found any more, update the Page Action
   if (bPageErrors) {
     setIconStateError(tabID);
-  } else {
-    console.log('%cURL: ' + page.href + ' has no Littledata tracking issues!','color: #060;');
   }
 }
 
@@ -214,7 +268,11 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
   //Clicking the Extension's Page Action
   if ((msg.from === 'popup') && (msg.subject === 'pageActionClicked')) {
     //Just in case we need it later...
-    //console.log('Page action clicked.');
+    console.log('Page action clicked.');
+    chrome.storage.local.get('errorLog', function (result) {
+      console.log('Sending log to popup.');
+      chrome.runtime.sendMessage({ from: 'background', subject: 'updateContent', data: result.errorLog });
+    });
   }
   
   //Turning the extension on and off

@@ -10,11 +10,11 @@
  */
 
 chrome.storage.local.get('state', function(result){
-  if(result.state == null) {
+  if(result.state === null) {
     initDisabledState();
-  } else if (result.state == false) {
+  } else if (result.state === false) {
     initDisabledState();
-  } if(result.state == true) {
+  } if(result.state === true) {
     initActiveState();
     injectContentScriptJS();
     initPageDataContentListener();
@@ -181,12 +181,12 @@ function injectContentScriptJS() {
         }));
       }
     );
-  `
+  `;
 
-  const script = document.createElement('script')
+  const script = document.createElement('script');
   script.textContent = injectCode;
-  document.documentElement.appendChild(script)
-  script.parentNode.removeChild(script)  
+  document.documentElement.appendChild(script);
+  script.parentNode.removeChild(script);
 }
 
 function initPageDataContentListener() {
