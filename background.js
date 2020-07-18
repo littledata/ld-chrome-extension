@@ -2,6 +2,8 @@
 INSTALLATION AND UPDATE DETECTION
 ***************************************/
 
+/* igor started working on this */
+
 /*
    Listen for installation related events. This either comes from installing
    via the Chrome app store, or from loading an unpacked extension via the
