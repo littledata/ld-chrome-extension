@@ -150,7 +150,6 @@ function injectContentScriptJS() {
                   googleClientID = cartData.attributes['google-clientID'];
                   if (googleClientID) {
                     data.CartClientID = googleClientID;
-                    console.log('CCID in v8');
                   } else {
                     //fallback for older versions
                     googleClientID = cartData.attributes['clientID'];
@@ -179,8 +178,15 @@ function injectContentScriptJS() {
         window.dispatchEvent(new CustomEvent("setLittledataPageData", {
           detail: data
         }));
+        var logLD = "LD extension:" + JSON.stringify(data, null, 2);
+        console.log(logLD);
       }
     );
+    
+    if (window.location.hostname.indexOf("littledata.io") > -1) {
+      window.localStorage.setItem("LD internal","yes");
+    }
+    
   `;
 
   const script = document.createElement('script');
