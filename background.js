@@ -195,14 +195,15 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
   }
   
   //CHECK 9 : Missing GA Tracking ID
-  if (!page.Littledata.webPropertyID.length) {
+  /*if (!page.Littledata.webPropertyID.length) {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE09A',
       message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.'
     });
     console.log('%c' + prefix + page.href + '', 'color: #600');
-  } else if (page.Littledata.webPropertyID.length <= 0) {
+  } else */
+   if (page.Littledata.webPropertyID == undefined || page.Littledata.webPropertyID == '') {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE09B',

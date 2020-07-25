@@ -103,10 +103,14 @@ function injectContentScriptJS() {
             if (v && v[1]) data.Littledata.version = v[1];
           }
 
-          if (data.Littledata.webPropertyID === '') {
+          if (data.Littledata.webPropertyID == undefined) {
             //Get web property ID
             let p = rgxTagProperty.exec(src);
-            if (p) data.Littledata.webPropertyID = p[0];
+            if (p) {
+              data.Littledata.webPropertyID = p[0];
+            } else {
+              data.Littledata.webPropertyID = ga.getAll()[0].get('trackingId');
+            }
           }
         } else {
           console.log('Could not find LD tag');
@@ -171,8 +175,8 @@ function injectContentScriptJS() {
       return data;
     }
 
-    document.addEventListener(
-      "DOMContentLoaded",
+    window.addEventListener(
+      "load",
       function(event) {
         var data = getLittlebugPageData();
         window.dispatchEvent(new CustomEvent("setLittledataPageData", {
@@ -183,6 +187,7 @@ function injectContentScriptJS() {
       }
     );
     
+    // setting an internal visitor filter for GA
     if (window.location.hostname.indexOf("littledata.io") > -1) {
       window.localStorage.setItem("LD internal","yes");
     }
