@@ -2,8 +2,6 @@
 INSTALLATION AND UPDATE DETECTION
 ***************************************/
 
-/* igor started working on this */
-
 /*
    Listen for installation related events. This either comes from installing
    via the Chrome app store, or from loading an unpacked extension via the
@@ -195,19 +193,11 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
   }
   
   //CHECK 9 : Missing GA Tracking ID
-  /*if (!page.Littledata.webPropertyID.length) {
-    bPageErrors = true;
-    errors.messages.push({
-      code: 'LDE09A',
-      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.'
-    });
-    console.log('%c' + prefix + page.href + '', 'color: #600');
-  } else */
    if (page.Littledata.webPropertyID == undefined || page.Littledata.webPropertyID == '') {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE09B',
-      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) has not been set.'
+      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.'
     });
   }
   
