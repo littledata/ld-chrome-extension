@@ -3,7 +3,7 @@
   "description" : "Debug common problems with Littledata's Shopify app setup",
   "manifest_version": 2,
   "version": "0.2.1",
-  "permissions" : ["activeTab", "*://*/*", "storage", "declarativeContent"],
+  "permissions" : ["activeTab", "*://*/*", "storage"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
