@@ -130,7 +130,7 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE04',
-      message: 'Littledata app version is out of date (v' + + page.Littledata.version + ').'
+      message: 'Littledata app version is out of date (' + page.Littledata.version + ').'
     });
   }
   
