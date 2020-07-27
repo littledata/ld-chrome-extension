@@ -126,7 +126,7 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
   }
   
   //CHECK 4 : Is the app version out of date?
-  if (page.Littledata.version !== 'v8.2') {
+  if (page.Littledata.version !== 'v8.4') {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE04',
