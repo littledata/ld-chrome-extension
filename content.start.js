@@ -103,10 +103,14 @@ function injectContentScriptJS() {
             if (v && v[1]) data.Littledata.version = v[1];
           }
 
-          if (data.Littledata.webPropertyID === '') {
+          if (data.Littledata.webPropertyID == undefined) {
             //Get web property ID
             let p = rgxTagProperty.exec(src);
-            if (p) data.Littledata.webPropertyID = p[0];
+            if (p) {
+              data.Littledata.webPropertyID = p[0];
+            } else {
+              data.Littledata.webPropertyID = ga.getAll()[0].get('trackingId');
+            }
           }
         } else {
           console.log('Could not find LD tag');
@@ -150,7 +154,6 @@ function injectContentScriptJS() {
                   googleClientID = cartData.attributes['google-clientID'];
                   if (googleClientID) {
                     data.CartClientID = googleClientID;
-                    console.log('CCID in v8');
                   } else {
                     //fallback for older versions
                     googleClientID = cartData.attributes['clientID'];
@@ -172,15 +175,23 @@ function injectContentScriptJS() {
       return data;
     }
 
-    document.addEventListener(
-      "DOMContentLoaded",
+    window.addEventListener(
+      "load",
       function(event) {
         var data = getLittlebugPageData();
         window.dispatchEvent(new CustomEvent("setLittledataPageData", {
           detail: data
         }));
+        var logLD = "LD extension:" + JSON.stringify(data, null, 2);
+        console.log(logLD);
       }
     );
+    
+    // setting an internal visitor filter for GA
+    if (window.location.hostname.indexOf("littledata.io") > -1) {
+      window.localStorage.setItem("LD internal","yes");
+    }
+    
   `;
 
   const script = document.createElement('script');

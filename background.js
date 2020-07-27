@@ -126,7 +126,7 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
   }
   
   //CHECK 4 : Is the app version out of date?
-  if (page.Littledata.version !== 'v8.0.5') {
+  if (page.Littledata.version !== 'v8.4') {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE04',
@@ -193,18 +193,11 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
   }
   
   //CHECK 9 : Missing GA Tracking ID
-  if (!page.Littledata.webPropertyID.length) {
-    bPageErrors = true;
-    errors.messages.push({
-      code: 'LDE09A',
-      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.'
-    });
-    console.log('%c' + prefix + page.href + '', 'color: #600');
-  } else if (page.Littledata.webPropertyID.length <= 0) {
+   if (page.Littledata.webPropertyID == undefined || page.Littledata.webPropertyID == '') {
     bPageErrors = true;
     errors.messages.push({
       code: 'LDE09B',
-      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) has not been set.'
+      message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.'
     });
   }
   
