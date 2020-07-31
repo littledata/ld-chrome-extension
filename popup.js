@@ -56,12 +56,12 @@ function parseLogDataToHTML(data) {
 
   if (tableRows.length > 0) {
     let output = `
-      <table class="table table-condensed" style="border-collapse:collapse;">
+      <table class="table" style="border-collapse:collapse;word-break: break-word;">
         <thead>
           <tr>
-            <th>&nbsp;</th>
-            <th>#</th>
-            <th>URL</th>
+            <th style="width:5%">&nbsp;</th>
+            <th style="width:5%">#</th>
+            <th style="width:90%">URL</th>
           </tr>
         </thead>
         <tbody>
