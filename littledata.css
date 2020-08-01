@@ -26,3 +26,7 @@ width: 530px;
 .log-entry-url {
   text-overflow: ellipsis;
 }
+
+#clear-log-text {
+  text-emphasis-color: red;
+}
