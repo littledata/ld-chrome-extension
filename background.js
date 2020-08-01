@@ -55,6 +55,11 @@ function resetLocalStorageContent() {
   //reset local storage
   chrome.storage.local.clear();
   chrome.storage.local.set({ state : true });
+  //and reload the page
+  chrome.tabs.getSelected(null, function(tab) {
+    var code = 'window.location.reload();';
+    chrome.tabs.executeScript(tab.id, {code: code});
+  });
 }
 
 function setIconStateEnabled(tab) {
