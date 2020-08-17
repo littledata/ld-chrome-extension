@@ -1,8 +1,15 @@
 var enabled = false; //disabled by default
 var checkboxExtensionEnabled = document.getElementById('toggle-ext-active');
+var resetBtn = document.getElementById('reset-log');
 
 document.addEventListener('DOMContentLoaded', function() {
   chrome.runtime.sendMessage({ from: 'popup', subject: 'pageActionClicked' });
+});
+
+resetBtn.addEventListener('click', function() {
+  chrome.runtime.sendMessage({ from: 'popup', subject: 'pageResetClicked' });
+  $(document.body).find("#output-log").empty();
+  $(document.body).find("#output-log").append('<p class="font-italic text-info">Log is cleared</p>')
 });
 
 chrome.runtime.onMessage.addListener((msg, sender) => {
@@ -56,12 +63,12 @@ function parseLogDataToHTML(data) {
 
   if (tableRows.length > 0) {
     let output = `
-      <table class="table table-condensed" style="border-collapse:collapse;">
+      <table class="table" style="border-collapse:collapse;word-break: break-word;">
         <thead>
           <tr>
-            <th>&nbsp;</th>
-            <th>#</th>
-            <th>URL</th>
+            <th style="width:5%">&nbsp;</th>
+            <th style="width:10%">#</th>
+            <th style="width:85%">URL</th>
           </tr>
         </thead>
         <tbody>

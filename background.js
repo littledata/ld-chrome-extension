@@ -46,9 +46,20 @@ function clearLocalStorageContent() {
     var error = chrome.runtime.lastError;
     if (error) console.error(error);
   });
-  
+
   //As this happens on disabling the extension, reset the state value:
   chrome.storage.local.set({ state: false });
+}
+
+function resetLocalStorageContent() {
+  //reset local storage
+  chrome.storage.local.clear();
+  chrome.storage.local.set({ state : true });
+  //and reload the page
+  chrome.tabs.getSelected(null, function(tab) {
+    var code = 'window.location.reload();';
+    chrome.tabs.executeScript(tab.id, {code: code});
+  });
 }
 
 function setIconStateEnabled(tab) {
@@ -267,10 +278,16 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
       chrome.runtime.sendMessage({ from: 'background', subject: 'updateContent', data: result.errorLog });
     });
   }
-  
+
+ //Clicking the Extension's Reset Button
+ if ((msg.from === 'popup') && (msg.subject === 'pageResetClicked')) {
+  console.log('Page reset clicked.');
+  resetLocalStorageContent();
+}
+
   //Turning the extension on and off
   if ((msg.from === 'content') && (msg.subject === 'changeExtensionIcon')) {
-    //console.log("[Event: changeExtensionIcon] Tab ID: " + sender.tab.id + " | Mode: " + msg.mode);
+    console.log("Mode: " + msg.mode);
     if (msg.mode) {
       enableExtension(sender);
     } else {

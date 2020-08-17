@@ -113,7 +113,7 @@ function injectContentScriptJS() {
             }
           }
         } else {
-          console.log('Could not find LD tag');
+          console.debug('Could not find LD tag');
         }
       } catch(e) {}
 
@@ -159,7 +159,7 @@ function injectContentScriptJS() {
                     googleClientID = cartData.attributes['clientID'];
                     if (googleClientID) {
                       data.CartClientID = googleClientID;
-                      console.log('CCID in legacy');
+                      console.debug('CCID in legacy');
                     }
                   }
                 }
@@ -169,7 +169,7 @@ function injectContentScriptJS() {
         };
         xhr.send();
       } catch(err) {
-        console.error("Littlebug XHR error: ",err.message);
+        console.debug("Littlebug XHR error: ",err.message);
       }
       
       return data;
@@ -183,7 +183,7 @@ function injectContentScriptJS() {
           detail: data
         }));
         var logLD = "LD extension:" + JSON.stringify(data, null, 2);
-        console.log(logLD);
+        console.debug(logLD);
       }
     );
     
