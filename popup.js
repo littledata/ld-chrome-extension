@@ -4,6 +4,8 @@ var resetBtn = document.getElementById('reset-log');
 
 document.addEventListener('DOMContentLoaded', function() {
   chrome.runtime.sendMessage({ from: 'popup', subject: 'pageActionClicked' });
+  var extVer = chrome.runtime.getManifest().version;
+  document.getElementById('ext-ver').textContent = "v"+extVer;
 });
 
 resetBtn.addEventListener('click', function() {
