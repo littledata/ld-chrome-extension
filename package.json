@@ -1,22 +1,18 @@
 {
-  "name": "ld-chrome-extension",
-  "version": "0.2.2",
-  "description": "Chrome extension for Littledata debugging on Shopify",
-  "main": "background.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^6.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-import": "^2.12.0",
+    "prettier": "1.18.2"
   },
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/littledata/ld-chrome-extension.git"
+    "url": "git+https://github.com/littledata/ld-transaction-monitor.git"
   },
-  "author": "Jay Evans, Igor Kolosov, Edward Upton",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/littledata/ld-chrome-extension/issues"
-  },
-  "homepage": "https://github.com/littledata/ld-chrome-extension#readme",
-  "devDependencies": {
-    "eslint": "^7.7.0"
+  "scripts": {
+  	"prettier": "prettier --write \"**/*.js\""
   }
 }
