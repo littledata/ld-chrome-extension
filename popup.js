@@ -31,23 +31,6 @@ chrome.runtime.onMessage.addListener(msg => {
 	}
 })
 
-document.addEventListener('DOMContentLoaded', function() {
-	chrome.runtime.sendMessage({ from: 'popup', subject: 'pageActionClicked' })
-})
-
-chrome.runtime.onMessage.addListener(msg => {
-	if (msg.from === 'background' && msg.subject === 'updateContent') {
-		if (typeof msg.data !== 'undefined') {
-			const data = JSON.parse(msg.data)
-			chrome.extension
-				.getBackgroundPage()
-				.console.log('MESSAGE RECEIVED FROM BACKGROUND')
-			chrome.extension.getBackgroundPage().console.log(data)
-			parseLogDataToHTML(data)
-		}
-	}
-})
-
 chrome.storage.local.get('state', data => {
 	enabled = !!data.state
 	if (enabled) {

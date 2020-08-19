@@ -236,7 +236,7 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 }
 
 function analyseAllPages(pageLog, tabID) {
-  	let page = []
+  	//let page = []
 	let bPageErrors = false
 	const firstPage = pageLog[0]
 	const errorLog = []
@@ -275,6 +275,7 @@ MESSAGING FROM CONTENT SCRIPTS
 ***************************************/
 
 chrome.runtime.onMessage.addListener((msg, sender) => {
+	console.debug(msg)
 	// First, validate the message's structure.
 	if (msg.from === 'content' && msg.subject === 'showPageAction') {
 		// Enable the page-action for the requesting tab.
@@ -283,7 +284,6 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 
 	//Clicking the Extension's Page Action
 	if (msg.from === 'popup' && msg.subject === 'pageActionClicked') {
-		//Just in case we need it later...
 		chrome.storage.local.get('errorLog', function(result) {
 			chrome.runtime.sendMessage({
 				from: 'background',
