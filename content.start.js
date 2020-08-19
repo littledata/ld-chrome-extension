@@ -9,30 +9,39 @@
   Values defined or populated via this script are available for content.idle.js to read and edit, though.
  */
 
-chrome.storage.local.get('state', function(result){
-  if(result.state === null) {
-    initDisabledState();
-  } else if (result.state === false) {
-    initDisabledState();
-  } if(result.state === true) {
-    initActiveState();
-    injectContentScriptJS();
-    initPageDataContentListener();
-  }
-});
- 
+chrome.storage.local.get('state', function(result) {
+	if (result.state === null) {
+		initDisabledState()
+	} else if (result.state === false) {
+		initDisabledState()
+	}
+	if (result.state === true) {
+		initActiveState()
+		injectContentScriptJS()
+		initPageDataContentListener()
+	}
+})
+
 //Page render with extension active state == false
 function initDisabledState() {
-   chrome.runtime.sendMessage({ from: 'content', subject: 'changeExtensionIcon', mode: false });
+	chrome.runtime.sendMessage({
+		from: 'content',
+		subject: 'changeExtensionIcon',
+		mode: false,
+	})
 }
 
 //Page render with extension active state == true
 function initActiveState() {
-   chrome.runtime.sendMessage({ from: 'content', subject: 'changeExtensionIcon', mode: true });
+	chrome.runtime.sendMessage({
+		from: 'content',
+		subject: 'changeExtensionIcon',
+		mode: true,
+	})
 }
 
 function injectContentScriptJS() {
-  let injectCode = `
+	const injectCode = `
     function getLittlebugPageData() {
 
       //OUTPUT OBJECT
@@ -192,20 +201,30 @@ function injectContentScriptJS() {
       window.localStorage.setItem("LD internal","yes");
     }
     
-  `;
+  `
 
-  const script = document.createElement('script');
-  script.textContent = injectCode;
-  document.documentElement.appendChild(script);
-  script.parentNode.removeChild(script);
+	const script = document.createElement('script')
+	script.textContent = injectCode
+	document.documentElement.appendChild(script)
+	script.parentNode.removeChild(script)
 }
 
 function initPageDataContentListener() {
-  let pageLog = [];
-  chrome.storage.local.get('pageLog', function(result) { pageLog = JSON.parse(result.pageLog); });
-  
-  window.addEventListener("setLittledataPageData", function(data) {
-    pageLog.push(data.detail); //add current page's data to the log
-    chrome.runtime.sendMessage({ from: 'content', subject: 'savePageLogData', data: JSON.stringify(pageLog) });
-  }, false);
+	let pageLog = []
+	chrome.storage.local.get('pageLog', function(result) {
+		pageLog = JSON.parse(result.pageLog)
+	})
+
+	window.addEventListener(
+		'setLittledataPageData',
+		function(data) {
+			pageLog.push(data.detail) //add current page's data to the log
+			chrome.runtime.sendMessage({
+				from: 'content',
+				subject: 'savePageLogData',
+				data: JSON.stringify(pageLog),
+			})
+		},
+		false
+	)
 }

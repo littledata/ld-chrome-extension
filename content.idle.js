@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' });
+chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' })
 
 /**************************************************
  * PAGE ACTION AND LOCAL STORAGE STATE MANAGEMENT *
@@ -13,10 +13,14 @@ chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' });
 
 // Listen for messages from the popup.
 chrome.runtime.onMessage.addListener((msg, sender, response) => {
-  //Extension enabled / disabled toggle
-  if ((msg.from === 'popup') && (msg.subject === 'EnableExtension')) {
-    chrome.runtime.sendMessage({ from: 'content', subject: 'changeExtensionIcon', mode: msg.mode });
-    var statusInfo = { statusText : msg.mode ? 'enabled' : 'disabled' };
-    response(statusInfo);
-  } 
-});
+	//Extension enabled / disabled toggle
+	if (msg.from === 'popup' && msg.subject === 'EnableExtension') {
+		chrome.runtime.sendMessage({
+			from: 'content',
+			subject: 'changeExtensionIcon',
+			mode: msg.mode,
+		})
+		const statusInfo = { statusText: msg.mode ? 'enabled' : 'disabled' }
+		response(statusInfo)
+	}
+})
