@@ -8,18 +8,24 @@ INSTALLATION AND UPDATE DETECTION
    chrome://extensions page. Note that refreshing an unpacked extension will
    count as an 'update' status rather than a new installation.
  */
-/*chrome.runtime.onInstalled.addListener(function(details) {
+chrome.runtime.onInstalled.addListener(function(details) {
 	if (details.reason === 'install') {
 		//New installation - open a new tab to our help guide.
+		console.log('This is a first install!')
 		chrome.tabs.create({ url: 'https://www.littledata.io/' }, function(
 			tab
-		) {})
+		) {
+			console.log('Opened help guide on https://www.littledata.io/')
+		})
 	} else if (details.reason === 'update') {
 		//Version update, just drop a note in the console for now..
 		const thisVersion = chrome.runtime.getManifest().version
+		console.log(
+			`Updated from ${details.previousVersion} to ${thisVersion}!`
+		)
 	}
 })
-*/
+
 /***************************************
 PAGE ACTION STATE MANAGEMENT
 ***************************************/
@@ -40,7 +46,10 @@ function disableExtension(sender) {
 
 function clearLocalStorageContent() {
 	//Clear local storage
-	chrome.storage.local.clear(function() {})
+	chrome.storage.local.clear(function() {
+		const error = chrome.runtime.lastError
+		if (error) console.error(error)
+	})
 
 	//As this happens on disabling the extension, reset the state value:
 	chrome.storage.local.set({ state: false })
@@ -284,7 +293,9 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 	//Clicking the Extension's Page Action
 	if (msg.from === 'popup' && msg.subject === 'pageActionClicked') {
 		//Just in case we need it later...
+		console.log('Page action clicked.')
 		chrome.storage.local.get('errorLog', function(result) {
+			console.log('Sending log to popup.')
 			chrome.runtime.sendMessage({
 				from: 'background',
 				subject: 'updateContent',
@@ -295,11 +306,14 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 
 	//Clicking the Extension's Reset Button
 	if (msg.from === 'popup' && msg.subject === 'pageResetClicked') {
+		console.log('Page reset clicked.')
 		resetLocalStorageContent()
 	}
 
 	//Turning the extension on and off
 	if (msg.from === 'content' && msg.subject === 'changeExtensionIcon') {
+		console.log(`Mode: ${msg.mode}`)
+
 		if (msg.mode) {
 			enableExtension(sender)
 		} else {
