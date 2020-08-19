@@ -1,19 +1,24 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="author" content="Littledata" />
-    <title>Littledata Shopify Debugger</title>
-    <link href="theme.css" rel="stylesheet" />
-    <link href="littledata.css" rel="stylesheet" />
-  </head>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="author" content="Littledata" />
+  <title>Littledata Shopify Debugger</title>
+  <link href="theme.css" rel="stylesheet" />
+  <link href="font-awesome.min.css" rel="stylesheet" />
+  <link href="littledata.css" rel="stylesheet" />
+</head>
   <body>
     <div class="wrapper">
       <nav class="navbar navbar-expand-lg navbar-dark bg-primary static-top">
         <div class="container">
           <a class="navbar-brand" href="#"><img class="img-fluid" src="images/icon-trans-48.png" alt="Littledata logo" /></a>
           <span class="text-white">Littledata</span>
+          <span class="text-white"><em><sup id="ext-ver"></sup></em></span>
+        </div>
+        <div>
+          <button id="reset-log">Reset log</button>
         </div>
       </nav>
       <div class="container-fluid my-2 px-2">
@@ -21,14 +26,15 @@
           <input type="checkbox" class="custom-control-input" id="toggle-ext-active" />
           <label class="custom-control-label" for="toggle-ext-active">Enable Extension</label>
         </div>
-        <h3 style="font-weight:bold; text-align:center;">DOM Info</h3>
-        <table border="1" cellpadding="3" style="border-collapse:collapse;">
+        <table border="0" cellpadding="3" style="border-collapse:collapse;">
           <tr>
-            <td nowrap>Monitoring Status:</td>
-            <td align="right">Monitoring is currently <span id="monitoring">disabled</span></td>
+            <td nowrap>Status:</td>
+            <td align="right">Shopify debugger is currently <span id="monitoring">disabled</span></td>
           </tr>
         </table>
       </div>
+    </div>
+    <div class="container-fluid my-2 px-2" id="output-log">
     </div>
     <script src="jquery.slim.min.js"></script>
     <script src="bootstrap.bundle.min.js"></script>
