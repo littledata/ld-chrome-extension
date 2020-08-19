@@ -100,7 +100,6 @@ function analyseLogData(tabID) {
 }
 
 function analysePage(page, tabID, bIsJourneyStart, index = 0) {
-	const prefix = bIsJourneyStart ? 'Start URL: ' : 'URL: '
 	let bPageErrors = false
 	const errors = {
 		step: index,
@@ -237,6 +236,7 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 }
 
 function analyseAllPages(pageLog, tabID) {
+  	let page = []
 	let bPageErrors = false
 	const firstPage = pageLog[0]
 	const errorLog = []
