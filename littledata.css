@@ -13,6 +13,7 @@ width: 530px;
 .img-responsive { display: block; height: auto; max-width: 100%; }
 .text-white { color: #FFF; }
 #output-log { display: block; overflow: hidden; width: 100%; max-width: 530px;}
+
 .hiddenRow { padding: 0 !important; }
 .log-entry-messages { margin: 0; overflow: hidden; padding: 0; width: 100%; }
 #output-log .log-entry-messages p {

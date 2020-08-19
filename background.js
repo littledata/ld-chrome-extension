@@ -288,6 +288,7 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
   //Turning the extension on and off
   if ((msg.from === 'content') && (msg.subject === 'changeExtensionIcon')) {
     console.log("Mode: " + msg.mode);
+
     if (msg.mode) {
       enableExtension(sender);
     } else {
