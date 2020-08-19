@@ -1,0 +1,22 @@
+{
+  "name": "ld-chrome-extension",
+  "version": "0.2.2",
+  "description": "Chrome extension for Littledata debugging on Shopify",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/littledata/ld-chrome-extension.git"
+  },
+  "author": "Jay Evans, Igor Kolosov, Edward Upton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/littledata/ld-chrome-extension/issues"
+  },
+  "homepage": "https://github.com/littledata/ld-chrome-extension#readme",
+  "devDependencies": {
+    "eslint": "^7.7.0"
+  }
+}
