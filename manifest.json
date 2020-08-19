@@ -1,0 +1,43 @@
+{
+  "name": "Littledata Shopify Connection Debugger",
+  "description" : "Debug common problems with Littledata's Shopify app setup",
+  "manifest_version": 2,
+  "version": "0.2.2",
+  "permissions" : ["activeTab", "*://*/*", "storage"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.start.js"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["*://*/*"],
+      "js": ["content.idle.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "page_action": {
+    "default_icon" : {
+      "16" : "images/icon-grey-16.png",
+      "32" : "images/icon-grey-32.png",
+      "48" : "images/icon-grey-48.png",
+      "64" : "images/icon-grey-64.png",
+      "128" : "images/icon-grey-128.png"
+    },
+    "default_popup": "popup.html",
+    "default_title": "Littlebug for Shopify Connection"
+  },
+  "icons" : {
+    "16" : "images/icon-grey-16.png",
+    "32" : "images/icon-grey-32.png",
+    "48" : "images/icon-grey-48.png",
+    "64" : "images/icon-grey-64.png",
+    "128" : "images/icon-grey-128.png"
+  }
+}
