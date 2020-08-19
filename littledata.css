@@ -5,14 +5,15 @@ margin: 0px;
 max-height: 600px;
 overflow: hidden;
 padding: 0px;
-width: 400px;
+width: 530px;
 }
 
 .bg-littledata { background: color: #0FA69D; }
 .card-image{ width: 40%; }
 .img-responsive { display: block; height: auto; max-width: 100%; }
 .text-white { color: #FFF; }
-#output-log { display: block; overflow: hidden; width: 100%; }
+#output-log { display: block; overflow: hidden; width: 100%; max-width: 530px;}
+
 .hiddenRow { padding: 0 !important; }
 .log-entry-messages { margin: 0; overflow: hidden; padding: 0; width: 100%; }
 #output-log .log-entry-messages p {
@@ -25,4 +26,8 @@ width: 400px;
 
 .log-entry-url {
   text-overflow: ellipsis;
+}
+
+#clear-log-text {
+  text-emphasis-color: red;
 }
