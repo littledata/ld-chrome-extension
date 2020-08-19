@@ -45,15 +45,14 @@
         "no-unreachable" : "error",
         "no-trailing-spaces" : "warn",
         "no-await-in-loop": "error",
-        "max-len": ["warn", { "code": 100, "ignorePattern": "^import"  }],
+        "max-len": ["warn", { "code": 150, "ignorePattern": "^import"  }],
         "max-depth": ["warn", 3],
-        "max-lines": ["warn", 200],
+        "max-lines": ["warn", 400],
         "max-nested-callbacks": ["warn", 3],
         "max-params": ["warn", 4],
         "class-methods-use-this": "off",
         "new-cap": "warn",
-        "no-use-before-define": ["error", { "functions": false, "classes": true }],
-        "no-console": "off"
+        "no-use-before-define": ["error", { "functions": false, "classes": true }]
     },
     "env": {
         "es6": true,
