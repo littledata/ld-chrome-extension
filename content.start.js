@@ -72,7 +72,7 @@ function injectContentScriptJS() {
       let scripts = document.getElementsByTagName('script');
       let rgxGA = /www\\.google-analytics\\.com\\/ga\\.js/;
       let rgxUA = /www\\.google-analytics\\.com\\/analytics\\.js/;
-      let rgxDC = /stats\\.g\.doubleclick\\.net\\/dc\\.js/;
+      let rgxDC = /stats\\.g\\.doubleclick\\.net\\/dc\\.js/;
       let rgxGT = /www\\.googletagmanager\\.com\\/gtag\\/js/;
       let rgxTM = /www\\.googletagmanager\\.com\\/gtm\\.js/;
       let rgxLDC = /cdn\\.jsdelivr\\.net\\/gh\\/littledata\\/shopify-tracker\\/dist\\/carthookTracker\\.js/;
@@ -188,9 +188,12 @@ function injectContentScriptJS() {
       "load",
       function(event) {
         var data = getLittlebugPageData();
-        window.dispatchEvent(new CustomEvent("setLittledataPageData", {
-          detail: data
-        }));
+        if (data.Littledata.hasLittledataLayer) {
+          window.dispatchEvent(new CustomEvent("setLittledataPageData", {
+            detail: data
+          }));
+        }
+
         var logLD = "LD extension:" + JSON.stringify(data, null, 2);
         console.debug(logLD);
       }
