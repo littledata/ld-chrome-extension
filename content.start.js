@@ -40,8 +40,9 @@ function initActiveState() {
 	})
 }
 
+//injecting code that does the checks in the client window
 function injectContentScriptJS() {
-	const injectCode = `
+	const injectCode = '(' + function() {
     function getLittlebugPageData() {
 
       //OUTPUT OBJECT
@@ -70,15 +71,15 @@ function injectContentScriptJS() {
       
       //What scripts are on this page?
       let scripts = document.getElementsByTagName('script');
-      let rgxGA = /www\\.google-analytics\\.com\\/ga\\.js/;
-      let rgxUA = /www\\.google-analytics\\.com\\/analytics\\.js/;
-      let rgxDC = /stats\\.g\\.doubleclick\\.net\\/dc\\.js/;
-      let rgxGT = /www\\.googletagmanager\\.com\\/gtag\\/js/;
-      let rgxTM = /www\\.googletagmanager\\.com\\/gtm\\.js/;
-      let rgxLDC = /cdn\\.jsdelivr\\.net\\/gh\\/littledata\\/shopify-tracker\\/dist\\/carthookTracker\\.js/;
-      let rgxLDG = /cdn\\.jsdelivr\\.net\\/gh\\/littledata\\/shopify-tracker\\/dist\\/gaTracker\\.js/;
-      let rgxLDS = /cdn\\.jsdelivr\\.net\\/gh\\/littledata\\/shopify-tracker\\/dist\\/segmentTracker\\.js/;
-
+      let rgxGA = /www\.google\-analytics\.com\/ga\.js/;
+      let rgxUA = /www\.google\-analytics\.com\/analytics\.js/;
+      let rgxDC = /stats\.g\.doubleclick\.net\/dc\.js/;
+      let rgxGT = /www\.googletagmanager\.com\/gtag\/js/;
+      let rgxTM = /www\.googletagmanager\.com\/gtm\.js/;
+      let rgxLDC = /cdn\.jsdelivr\.net\/gh\/littledata\/shopify\-tracker\/dist\/carthookTracker\.js/;
+      let rgxLDG = /cdn\.jsdelivr\.net\/gh\/littledata\/shopify\-tracker\/dist\/gaTracker\.js/;
+      let rgxLDS = /cdn\.jsdelivr\.net\/gh\/littledata\/shopify\-tracker\/dist\/segmentTracker\.js/;
+  
       for (var i = 0, len = scripts.length; i < len; i++) {
         if (rgxGA.test(scripts[i].src)) data.Scripts.classic = true;
         if (rgxUA.test(scripts[i].src)) data.Scripts.universal = true;
@@ -89,7 +90,7 @@ function injectContentScriptJS() {
         if (rgxLDG.test(scripts[i].src)) data.Littledata.hasGATrackerJS = true;
         if (rgxLDS.test(scripts[i].src)) data.Littledata.hasSegmentTrackerJS = true;
       }
-
+  
       //What version of LD script is running and to what property?
       if(window.LittledataLayer) {
         data.Littledata.hasLittledataLayer = true;
@@ -98,9 +99,9 @@ function injectContentScriptJS() {
       }
       
       try {
-        let rgxTagVersion = /\\/[\\/\\*]\\s*Version\\s+(v?\\d+\.\\d+(?:\\.\\d+){0,2})/gi;
-        let rgxTagProperty = /UA\\-[0-9]+\\-[0-9]+/
-
+        let rgxTagVersion = /\/[\/\*]\s*Version\s+(v?\d+\.\d+(?:\.\d+){0,2})/gi;
+        let rgxTagProperty = /UA\-[0-9]+\-[0-9]+/
+  
         let ldTagElem = document.querySelector('[name="littledata-tracking-tag"');
         if (ldTagElem) {
           data.Littledata.hasTrackingTag = true;
@@ -111,7 +112,7 @@ function injectContentScriptJS() {
             let v = rgxTagVersion.exec(src);
             if (v && v[1]) data.Littledata.version = v[1];
           }
-
+  
           if (data.Littledata.webPropertyID == undefined) {
             //Get web property ID
             let p = rgxTagProperty.exec(src);
@@ -125,7 +126,7 @@ function injectContentScriptJS() {
           console.debug('Could not find LD tag');
         }
       } catch(e) {}
-
+  
       //Get Client ID from _ga Cookie
       try {
         let Cookie = "; " + document.cookie;
@@ -152,7 +153,7 @@ function injectContentScriptJS() {
         let xhr = new XMLHttpRequest();
         let googleClientID;
         xhr.open('GET', '/cart.js', false);
-
+  
         xhr.onreadystatechange = function (oEvent) {
           if (xhr.readyState === 4) {
             //Ignore 404s etc. so we don't get console error messages showing up
@@ -183,7 +184,7 @@ function injectContentScriptJS() {
       
       return data;
     }
-
+  
     window.addEventListener(
       "load",
       function(event) {
@@ -193,7 +194,7 @@ function injectContentScriptJS() {
             detail: data
           }));
         }
-
+  
         var logLD = "LD extension:" + JSON.stringify(data, null, 2);
         console.debug(logLD);
       }
@@ -202,9 +203,8 @@ function injectContentScriptJS() {
     // setting an internal visitor filter for GA
     if (window.location.hostname.indexOf("littledata.io") > -1) {
       window.localStorage.setItem("LD internal","yes");
-    }
-    
-  `
+    }  
+  } + ')();'
 
 	const script = document.createElement('script')
 	script.textContent = injectCode
