@@ -1,4 +1,4 @@
-chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' })
+chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' });
 
 /**************************************************
  * PAGE ACTION AND LOCAL STORAGE STATE MANAGEMENT *
@@ -19,8 +19,8 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 			from: 'content',
 			subject: 'changeExtensionIcon',
 			mode: msg.mode,
-		})
-		const statusInfo = { statusText: msg.mode ? 'enabled' : 'disabled' }
-		response(statusInfo)
+		});
+		const statusInfo = { statusText: msg.mode ? 'enabled' : 'disabled' };
+		response(statusInfo);
 	}
-})
+});

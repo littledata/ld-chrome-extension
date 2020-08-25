@@ -1,0 +1,6 @@
+.DS_Store
+ld_extension.code-workspace
+package.json
+.eslintrc.json
+package-lock.json
+node_modules/
