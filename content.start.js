@@ -9,6 +9,7 @@
   Values defined or populated via this script are available for content.idle.js to read and edit, though.
  */
 
+let test = false;
 chrome.storage.local.get('state', function(result) {
 	if (result.state === null) {
 		initDisabledState();
@@ -17,13 +18,21 @@ chrome.storage.local.get('state', function(result) {
 	}
 	if (result.state === true) {
 		initActiveState();
-		injectContentScriptJS();
-		initPageDataContentListener();
-		chrome.runtime.onMessage.addListener((msg, sender) => {
-			if (msg.from === 'backend' && msg.subject === 'currentTabId') {
-				console.debug('id sendera: ', sender.tab.id);
-				console.debug('id loga: ', msg.id);
-				chrome.pageAction.show(sender.tab.id);
+
+		chrome.runtime.onMessage.addListener(msg => {
+			console.debug('poruke: ', msg);
+			if (msg.from === 'background' && msg.subject === 'currentTabId') {
+				chrome.storage.local.get('tab', function(result) {
+					if (result.tab == msg.id) {
+						console.debug('rezultat: ', result.tab);
+						injectContentScriptJS();
+						initPageDataContentListener();
+					} else {
+						console.debug(
+							'This is a different store! Please click "reset" button in the popup'
+						);
+					}
+				});
 			}
 		});
 	}
@@ -49,6 +58,8 @@ function initActiveState() {
 
 //injecting code that does the checks in the client window
 function injectContentScriptJS() {
+	//console.debug('tu sam: ', test);
+	//if (test) {
 	const injectCode =
 		'(' +
 		function() {
@@ -245,6 +256,7 @@ function injectContentScriptJS() {
 	script.textContent = injectCode;
 	document.documentElement.appendChild(script);
 	script.parentNode.removeChild(script);
+	//	}
 }
 
 function initPageDataContentListener() {

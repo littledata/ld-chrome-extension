@@ -30,6 +30,11 @@ function enableExtension(sender) {
 
 	//Turn on the extension
 	setIconStateEnabled(sender.tab.id);
+	chrome.tabs.sendMessage(sender.tab.id, {
+		from: 'background',
+		subject: 'currentTabId',
+		id: sender.tab.id,
+	});
 }
 
 function disableExtension(sender) {
@@ -319,11 +324,3 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 });
 
 // message to content script
-
-chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-	chrome.tabs.sendMessage(
-		tabs[0].id,
-		{ from: 'backend', subject: 'currentTabId', id: tabs[0].id },
-		() => {}
-	);
-});
