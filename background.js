@@ -62,6 +62,7 @@ function setIconStateEnabled(tab) {
 		{ tabId: tab, path: 'images/icon-green-128.png' },
 		() => {}
 	);
+	console.debug('current tab id: ', tab);
 }
 
 function setIconStateDisabled(tab) {
@@ -89,7 +90,7 @@ function analyseLogData(tabID) {
 		pageLog = JSON.parse(result.pageLog);
 		if (pageLog.length > 0) {
 			if (pageLog.length === 1) {
-				const errors = analysePage(pageLog[0], tabID, false);
+				const errors = analysePage(pageLog[0], tabID, 0);
 				errorLog.push(errors);
 				chrome.storage.local.set({
 					errorLog: JSON.stringify(errorLog),
@@ -101,7 +102,7 @@ function analyseLogData(tabID) {
 	});
 }
 
-function analysePage(page, tabID, bIsJourneyStart, index = 0) {
+function analysePage(page, tabID, index) {
 	let bPageErrors = false;
 	const errors = {
 		step: index,
@@ -277,7 +278,8 @@ MESSAGING FROM CONTENT SCRIPTS
 ***************************************/
 
 chrome.runtime.onMessage.addListener((msg, sender) => {
-	console.debug(msg);
+	console.debug('notification: ', msg);
+
 	// First, validate the message's structure.
 	if (msg.from === 'content' && msg.subject === 'showPageAction') {
 		// Enable the page-action for the requesting tab.

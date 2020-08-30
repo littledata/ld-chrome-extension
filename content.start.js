@@ -72,12 +72,12 @@ function injectContentScriptJS() {
 				};
 
 				//What version of LD script is running and to what property?
+				// If LD dL doesn't exist, no checks will be done
 				if (window.LittledataLayer) {
 					data.Littledata.hasLittledataLayer = true;
 					data.Littledata.version = window.LittledataLayer.version;
 					data.Littledata.webPropertyID =
 						window.LittledataLayer.webPropertyID;
-
 
 					//What scripts are on this page?
 					let scripts = document.getElementsByTagName('script');
@@ -225,7 +225,6 @@ function injectContentScriptJS() {
 
 			window.addEventListener('load', () => {
 				getLittlebugPageData();
-
 			});
 
 			// setting an internal visitor filter for GA
@@ -244,9 +243,7 @@ function injectContentScriptJS() {
 function initPageDataContentListener() {
 	let pageLog = [];
 	chrome.storage.local.get('pageLog', function(result) {
-
 		if (result.pageLog) pageLog = JSON.parse(result.pageLog);
-
 	});
 
 	window.addEventListener(
