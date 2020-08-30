@@ -52,6 +52,7 @@ function resetLocalStorageContent() {
 	chrome.storage.local.set({ state: true });
 	//and reload the page
 	chrome.tabs.getSelected(null, function(tab) {
+		chrome.storage.local.set({ tab: tab.id });
 		const code = 'window.location.reload();';
 		chrome.tabs.executeScript(tab.id, { code });
 	});
@@ -315,4 +316,14 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 		chrome.storage.local.set({ pageLog: msg.data });
 		analyseLogData(sender.tab.id);
 	}
+});
+
+// message to content script
+
+chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+	chrome.tabs.sendMessage(
+		tabs[0].id,
+		{ from: 'backend', subject: 'currentTabId', id: tabs[0].id },
+		() => {}
+	);
 });

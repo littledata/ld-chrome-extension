@@ -19,6 +19,13 @@ chrome.storage.local.get('state', function(result) {
 		initActiveState();
 		injectContentScriptJS();
 		initPageDataContentListener();
+		chrome.runtime.onMessage.addListener((msg, sender) => {
+			if (msg.from === 'backend' && msg.subject === 'currentTabId') {
+				console.debug('id sendera: ', sender.tab.id);
+				console.debug('id loga: ', msg.id);
+				chrome.pageAction.show(sender.tab.id);
+			}
+		});
 	}
 });
 
