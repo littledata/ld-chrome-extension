@@ -20,16 +20,14 @@ chrome.storage.local.get('state', function(result) {
 		initActiveState();
 
 		chrome.runtime.onMessage.addListener(msg => {
-			console.debug('poruke: ', msg);
 			if (msg.from === 'background' && msg.subject === 'currentTabId') {
 				chrome.storage.local.get('tab', function(result) {
 					if (result.tab == msg.id) {
-						console.debug('rezultat: ', result.tab);
 						injectContentScriptJS();
 						initPageDataContentListener();
 					} else {
 						console.debug(
-							'This is a different store! Please click "reset" button in the popup'
+							'This is a different store! Please click "Start Logging" button in the popup to begin investigating this store'
 						);
 					}
 				});

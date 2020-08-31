@@ -253,7 +253,7 @@ function analyseAllPages(pageLog, tabID) {
 	for (let i = 0; i < pageLog.length; i++) {
 		//Retrieve page info and run its self-contained checks first
 		page = pageLog[i];
-		const errors = analysePage(page, tabID, i === 0, i);
+		const errors = analysePage(page, tabID, i);
 
 		//Compare all pages after the first to check the values haven't changed
 		if (i > 0) {
@@ -322,5 +322,3 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
 		analyseLogData(sender.tab.id);
 	}
 });
-
-// message to content script
