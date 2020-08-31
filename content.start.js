@@ -19,6 +19,8 @@ chrome.storage.local.get('state', function(result) {
 	if (result.state === true) {
 		initActiveState();
 
+		// this prevents on-page checks if the ID of the tab where the "start logging" button is pressed
+		// doesn't match the ID of the tab where the popup is loaded
 		chrome.runtime.onMessage.addListener(msg => {
 			if (msg.from === 'background' && msg.subject === 'currentTabId') {
 				chrome.storage.local.get('tab', function(result) {
@@ -56,8 +58,6 @@ function initActiveState() {
 
 //injecting code that does the checks in the client window
 function injectContentScriptJS() {
-	//console.debug('tu sam: ', test);
-	//if (test) {
 	const injectCode =
 		'(' +
 		function() {
@@ -254,7 +254,6 @@ function injectContentScriptJS() {
 	script.textContent = injectCode;
 	document.documentElement.appendChild(script);
 	script.parentNode.removeChild(script);
-	//	}
 }
 
 function initPageDataContentListener() {
