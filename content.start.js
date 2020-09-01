@@ -199,6 +199,15 @@ function injectContentScriptJS() {
 									data.CartClientID = googleClientID;
 									console.debug('legacy CCID');
 								}
+							});
+						})
+						.then(() => {
+							if (data.Littledata.hasLittledataLayer) {
+								window.dispatchEvent(
+									new CustomEvent('setLittledataPageData', {
+										detail: data,
+									})
+								);
 							}
 							console.debug(
 								'LD extension output:',

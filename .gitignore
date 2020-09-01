@@ -2,3 +2,5 @@
 ld_extension.code-workspace
 package-lock.json
 node_modules/
+.prettierrc.json
+.prettierignore
