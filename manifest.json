@@ -2,7 +2,7 @@
 	"name": "Littledata Shopify Connection Debugger",
 	"description": "Debug common problems with Littledata's Shopify app setup",
 	"manifest_version": 2,
-	"version": "0.2.4",
+	"version": "0.3",
 	"permissions": ["activeTab", "*://*/*", "storage"],
 	"background": {
 		"scripts": ["background.js"],
