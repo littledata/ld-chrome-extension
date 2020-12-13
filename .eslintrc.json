@@ -46,7 +46,7 @@
         "no-trailing-spaces" : "warn",
         "no-await-in-loop": "error",
         "max-len": ["warn", { "code": 150, "ignorePattern": "^import"  }],
-        "max-depth": ["warn", 3],
+        "max-depth": ["warn", 4],
         "max-lines": ["warn", 400],
         "max-nested-callbacks": ["warn", 3],
         "max-params": ["warn", 4],
