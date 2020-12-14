@@ -9,7 +9,7 @@ import {
 VALIDATING PAGE DATA
 ***************************************/
 
-function analyseLogData(tabID) {
+function analyseLogData(tabID: string) {
 	let pageLog = [];
 	const errorLog = [];
 	chrome.storage.local.get('pageLog', function(result) {

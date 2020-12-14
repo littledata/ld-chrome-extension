@@ -1,9 +1,35 @@
 export function frontendScript() {
 	//Get Client ID from Cart data
 	// KNOWN BUG: sometimes transactions.littledata.io does not push GA client ID to cart
-	// fast enough after page load before we fetch the cart object
+    // fast enough after page load before we fetch the cart object
+	
+	declare let window: LDWindow;
+	declare let ga: any;
+	
+    let data : FrontendData = {
+        href: window.location.href || '',
+        Littledata: {
+            hasLittledataLayer: false,
+            hasTrackingTag: false,
+            hasGATrackerJS: false,
+            hasSegmentTrackerJS: false,
+            hasCarthookTrackerJS: false,
+            version: '',
+            webPropertyID: '',
+        },
+        CookieID: '',
+        ClientID: '',
+        CartClientID: '',
+        Scripts: {
+            classic: false,
+            universal: false,
+            doubleclick: false,
+            gtag: false,
+            gtm: false,
+        },
+    };
 
-	function getCIDFromCart(cartCIDInput) {
+	function getCIDFromCart(cartCIDInput : ShopifyCart) {
 		let googleClientID;
 		if (cartCIDInput.attributes) {
 			googleClientID = cartCIDInput.attributes['google-clientID'];
@@ -24,29 +50,6 @@ export function frontendScript() {
 	}
 
 	function getLittlebugPageData() {
-		//OUTPUT OBJECT
-		const data = {
-			href: window.location.href || '',
-			Littledata: {
-				hasLittledataLayer: false,
-				hasTrackingTag: false,
-				hasGATrackerJS: false,
-				hasSegmentTrackerJS: false,
-				hasCarthookTrackerJS: false,
-				version: '',
-				webPropertyID: '',
-			},
-			CookieID: '',
-			ClientID: '',
-			CartClientID: '',
-			Scripts: {
-				classic: false,
-				universal: false,
-				doubleclick: false,
-				gtag: false,
-				gtm: false,
-			},
-		};
 
 		//What version of LD script is running and to what property?
 		if (window.LittledataLayer) {
@@ -122,7 +125,7 @@ export function frontendScript() {
 			//Get Client ID from _ga Cookie
 			try {
 				const Cookie = `; ${document.cookie}`;
-				const parts = Cookie.split('; _ga=');
+				const parts: string[] = Cookie.split('; _ga=');
 				if (parts.length == 2) {
 					const CookieText = parts
 						.pop()
