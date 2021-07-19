@@ -14,7 +14,6 @@ jobs:
       - image: circleci/node:12
     steps:
       - checkout
-      - run: apt-get
       - run: apt-get -y install curl jq
       - run: git archive -o pointless.zip HEAD
       - run: ACCESS_TOKEN=$(curl "https://accounts.google.com/o/oauth2/token" -d "client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${REFRESH_TOKEN}&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob" | jq -r .access_token)
