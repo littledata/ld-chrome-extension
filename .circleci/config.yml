@@ -23,24 +23,8 @@ jobs:
 workflows:
   main:
     jobs:
-      - install_npm
-      - test:
-          <<: *slack-notifications
-          requires:
-            - install_npm
-      - deploy_staging:
-          <<: *slack-notifications
-          requires:
-            - install_npm
-            - test
-          filters:
-            branches:
-              only: staging
       - deploy_prod:
           <<: *slack-notifications
-          requires:
-            - install_npm
-            - test
           filters:
             branches:
               only: master
