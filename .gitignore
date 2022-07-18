@@ -1,8 +1,3 @@
 .DS_Store
-ld_extension.code-workspace
-package.json
-.eslintrc.json
-package-lock.json
+*.code-workspace
 node_modules/
-.prettierrc.json
-.prettierignore

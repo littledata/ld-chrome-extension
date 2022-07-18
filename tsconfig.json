@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"sourceMap": true,
+		"rootDir": "./src",
+		"noEmitOnError": true,
+		"outDir": "./dist/js",
+		"noImplicitAny": true,
+		"target": "es2018",
+		"module": "commonjs",
+		"allowJs": true,
+		"esModuleInterop": true
+	}
+}
