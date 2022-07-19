@@ -2,13 +2,20 @@
 	"compilerOptions": {
 		"strict": true,
 		"sourceMap": true,
-		"rootDir": "./src",
+		"rootDir": "src",
 		"noEmitOnError": true,
-		"outDir": "./dist/js",
+		"outDir": "dist",
 		"noImplicitAny": true,
 		"target": "es2018",
 		"module": "commonjs",
-		"allowJs": true,
+		"allowJs": false,
 		"esModuleInterop": true
-	}
+	},
+	"include": [
+		"./**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+	]
 }
