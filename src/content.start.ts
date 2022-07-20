@@ -56,6 +56,7 @@ const injectContentScriptJS = () => {
 						hasGATrackerJS: false,
 						hasSegmentTrackerJS: false,
 						hasCarthookTrackerJS: false,
+						hasLDBundle: false,
 						version: '',
 						scriptVersion: '',
 						webPropertyID: '',
@@ -93,6 +94,7 @@ const injectContentScriptJS = () => {
 					const rgxLDC = /.+\/carthookTracker\.js/;
 					const rgxLDG = /.+\/colibrius-g\.js/;
 					const rgxLDS = /.+\/colibrius-s\.js/;
+					const rgxLDB = /.+\/colibrius\.js/;
 
 					for (let i = 0, len = scripts.length; i < len; i++) {
 						if (rgxGA.test(scripts[i].src)) data.Scripts.classic = true;
@@ -103,6 +105,7 @@ const injectContentScriptJS = () => {
 						if (rgxLDC.test(scripts[i].src)) data.Littledata.hasCarthookTrackerJS = true;
 						if (rgxLDG.test(scripts[i].src)) data.Littledata.hasGATrackerJS = true;
 						if (rgxLDS.test(scripts[i].src)) data.Littledata.hasSegmentTrackerJS = true;
+						if (rgxLDB.test(scripts[i].src)) data.Littledata.hasLDBundle = true;
 					}
 
 					// KNOWN BUG: there is a race with GA object and sometimes we don't get tracking ID

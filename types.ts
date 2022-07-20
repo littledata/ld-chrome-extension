@@ -23,6 +23,7 @@ export interface IData {
 		hasGATrackerJS: boolean;
 		hasSegmentTrackerJS: boolean;
 		hasCarthookTrackerJS: boolean;
+		hasLDBundle: boolean;
 		version: string;
 		scriptVersion: string;
 		webPropertyID: string;

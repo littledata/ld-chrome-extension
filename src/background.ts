@@ -131,7 +131,12 @@ const analysePage = (page: Record<string, any>, tabID: number, _bIsJourneyStart:
 
 	//CHECK 3 : Is one of our scripts active?
 	if (
-		!(page.Littledata.hasGATrackerJS || page.Littledata.hasSegmentTrackerJS || page.Littledata.hasCarthookTrackerJS)
+		!(
+			page.Littledata.hasGATrackerJS ||
+			page.Littledata.hasSegmentTrackerJS ||
+			page.Littledata.hasCarthookTrackerJS ||
+			page.Littledata.hasLDBundle
+		)
 	) {
 		bPageErrors = true;
 		errors.messages.push({
