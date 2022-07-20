@@ -57,6 +57,7 @@ const injectContentScriptJS = () => {
 						hasSegmentTrackerJS: false,
 						hasCarthookTrackerJS: false,
 						version: '',
+						scriptVersion: '',
 						webPropertyID: '',
 					},
 					CookieID: '',
@@ -75,8 +76,12 @@ const injectContentScriptJS = () => {
 				if (window.LittledataLayer) {
 					data.Littledata.hasLittledataLayer = true;
 					if (window.LittledataLayer.version) data.Littledata.version = window.LittledataLayer.version;
-					if (window.LittledataLayer.webPropertyID)
+					if (window.LittledataLayer.webPropertyID) {
 						data.Littledata.webPropertyID = window.LittledataLayer.webPropertyID;
+					} else if (window.LittledataLayer.webPropertyId) {
+						data.Littledata.webPropertyID = window.LittledataLayer.webPropertyId;
+					}
+					if (window.LittledataScriptVersion) data.Littledata.scriptVersion = window.LittledataScriptVersion;
 
 					//What scripts are on this page?
 					const scripts = document.getElementsByTagName('script');
@@ -85,9 +90,9 @@ const injectContentScriptJS = () => {
 					const rgxDC = /stats\.g\.doubleclick\.net\/dc\.js/;
 					const rgxGT = /www\.googletagmanager\.com\/gtag\/js/;
 					const rgxTM = /www\.googletagmanager\.com\/gtm\.js/;
-					const rgxLDC = /.+dist\/carthookTracker\.js/;
-					const rgxLDG = /.+dist\/gaTracker\.js/;
-					const rgxLDS = /.+dist\/segmentTracker\.js/;
+					const rgxLDC = /.+\/carthookTracker\.js/;
+					const rgxLDG = /.+\/colibrius-g\.js/;
+					const rgxLDS = /.+\/colibrius-s\.js/;
 
 					for (let i = 0, len = scripts.length; i < len; i++) {
 						if (rgxGA.test(scripts[i].src)) data.Scripts.classic = true;

@@ -1,3 +1,5 @@
+import { SCRIPT_VERSION } from './constants';
+
 /***************************************
 INSTALLATION AND UPDATE DETECTION
 ***************************************/
@@ -139,7 +141,7 @@ const analysePage = (page: Record<string, any>, tabID: number, _bIsJourneyStart:
 	}
 
 	//CHECK 4 : Is the app version out of date?
-	if (page.Littledata.version !== 'v8.4') {
+	if (page.Littledata.scriptVersion !== SCRIPT_VERSION) {
 		bPageErrors = true;
 		errors.messages.push({
 			code: 'LDE04',

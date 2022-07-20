@@ -24,6 +24,7 @@ export interface IData {
 		hasSegmentTrackerJS: boolean;
 		hasCarthookTrackerJS: boolean;
 		version: string;
+		scriptVersion: string;
 		webPropertyID: string;
 	};
 	CookieID: string;
@@ -36,18 +37,4 @@ export interface IData {
 		gtag: boolean;
 		gtm: boolean;
 	};
-}
-
-interface CustomEventMap {
-	setLittledataPageData: CustomEvent<IData>;
-}
-
-declare global {
-	interface Document {
-		//adds definition to Document, but you can do the same with HTMLElement
-		addEventListener<K extends keyof CustomEventMap>(
-			type: K,
-			listener: (this: Document, ev: CustomEventMap[K]) => void,
-		): void;
-	}
 }
