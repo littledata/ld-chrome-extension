@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"strict": true,
 		"sourceMap": true,
-		"rootDir": "src",
+		//"rootDir": "src",
 		"noEmitOnError": true,
 		"outDir": "dist",
 		"noImplicitAny": true,
@@ -15,7 +15,7 @@
 		"./**/*"
 	],
 	"exclude": [
-		"node_modules",
+		//"node_modules",
 		"dist",
 	]
 }
