@@ -5,10 +5,10 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
 	mode: 'production',
 	entry: {
-		background: path.resolve(__dirname, 'src', 'background.js'),
-		popup: path.resolve(__dirname, 'src', 'popup.js'),
-		'content.idle': path.resolve(__dirname, 'src', 'content.idle.js'),
-		'content.start': path.resolve(__dirname, 'src', 'content.start.js'),
+		background: path.resolve(__dirname, 'src', 'background.ts'),
+		popup: path.resolve(__dirname, 'src', 'popup.ts'),
+		'content.idle': path.resolve(__dirname, 'src', 'content.idle.ts'),
+		'content.start': path.resolve(__dirname, 'src', 'content.start.ts'),
 	},
 	output: {
 		path: path.join(__dirname, 'dist'),
