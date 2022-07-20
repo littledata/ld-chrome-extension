@@ -56,6 +56,7 @@ checkboxExtensionEnabled?.addEventListener('click', () => {
 		.getBackgroundPage()
 		// @ts-ignore
 		?.console.log(`Littledata Shopify Connection Debugger has been ${enabled ? 'switched ON' : 'switched OFF'}`);
+
 	chrome.tabs.query(
 		{
 			active: true,

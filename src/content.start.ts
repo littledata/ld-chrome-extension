@@ -2,29 +2,6 @@ import { CustomWindow, IData } from '../types';
 
 declare let window: CustomWindow;
 
-const data: IData = {
-	href: window.location.href || '',
-	Littledata: {
-		hasLittledataLayer: false,
-		hasTrackingTag: false,
-		hasGATrackerJS: false,
-		hasSegmentTrackerJS: false,
-		hasCarthookTrackerJS: false,
-		version: '',
-		webPropertyID: '',
-	},
-	CookieID: '',
-	ClientID: '',
-	CartClientID: '',
-	Scripts: {
-		classic: false,
-		universal: false,
-		doubleclick: false,
-		gtag: false,
-		gtm: false,
-	},
-};
-
 /****************************
  * CONTENT SCRIPT INJECTION *
  ****************************/
@@ -71,6 +48,29 @@ const injectContentScriptJS = () => {
 		'(' +
 		function () {
 			function getLittlebugPageData() {
+				const data: IData = {
+					href: window.location.href || '',
+					Littledata: {
+						hasLittledataLayer: false,
+						hasTrackingTag: false,
+						hasGATrackerJS: false,
+						hasSegmentTrackerJS: false,
+						hasCarthookTrackerJS: false,
+						version: '',
+						webPropertyID: '',
+					},
+					CookieID: '',
+					ClientID: '',
+					CartClientID: '',
+					Scripts: {
+						classic: false,
+						universal: false,
+						doubleclick: false,
+						gtag: false,
+						gtm: false,
+					},
+				};
+
 				//What version of LD script is running and to what property?
 				if (window.LittledataLayer) {
 					data.Littledata.hasLittledataLayer = true;

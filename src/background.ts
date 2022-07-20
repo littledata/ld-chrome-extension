@@ -53,10 +53,10 @@ const resetLocalStorageContent = () => {
 	chrome.storage.local.clear();
 	chrome.storage.local.set({ state: true });
 	//and reload the page
-	chrome.tabs.getSelected(null, function (tab) {
+	chrome.tabs.query({ active: true, currentWindow: true }, () => {
 		const code = 'window.location.reload();';
 
-		chrome.tabs.executeScript(tab.id, { code });
+		chrome.tabs.executeScript({ code });
 	});
 };
 
