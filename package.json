@@ -1,6 +1,6 @@
 {
   "name": "ld-chrome-extension",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Debug common problems with Littledata's Shopify app setup",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
