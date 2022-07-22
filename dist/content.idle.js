@@ -1,0 +1,1 @@
+(()=>{"use strict";chrome.runtime.sendMessage({from:"content",subject:"showPageAction"}),chrome.runtime.onMessage.addListener(((e,n,s)=>{"popup"===e.from&&"EnableExtension"===e.subject&&(chrome.runtime.sendMessage({from:"content",subject:"changeExtensionIcon",mode:e.mode}),s({statusText:e.mode?"enabled":"disabled"}))}))})();
