@@ -36,6 +36,8 @@ workflows:
       - install_npm
       - deploy_prod:
           <<: *slack-notifications
+          requires:
+            - install_npm
           filters:
             branches:
               only: master
