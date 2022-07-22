@@ -10,6 +10,13 @@ slack-notifications: &slack-notifications
   post-steps:
     - ld-common-circleci/notify-fail
 jobs:
+  install_npm:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - node/install-npm
+      - node/install-packages
   deploy_prod:
     docker:
       - image: circleci/node:12
@@ -26,6 +33,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - install_npm
       - deploy_prod:
           <<: *slack-notifications
           filters:
