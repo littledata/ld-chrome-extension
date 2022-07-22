@@ -10,13 +10,21 @@ slack-notifications: &slack-notifications
   post-steps:
     - ld-common-circleci/notify-fail
 jobs:
+  install_npm:
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - node/install-npm
+      - node/install-packages
   deploy_prod:
     docker:
       - image: circleci/node:12
     steps:
       - checkout
       - jq/install
-      - run: git archive -o pointless.zip HEAD
+      - run: webpack --config webpack.config.js
+      - run: git archive -o pointless.zip HEAD:dist/
       - run: |
           ACCESS_TOKEN=$(curl "https://accounts.google.com/o/oauth2/token" -d "client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&refresh_token=${REFRESH_TOKEN}&grant_type=refresh_token&redirect_uri=urn:ietf:wg:oauth:2.0:oob" | jq -r .access_token)
           echo $ACCESS_TOKEN 
@@ -25,6 +33,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - install_npm
       - deploy_prod:
           <<: *slack-notifications
           filters:

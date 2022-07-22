@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"sourceMap": true,
+		"noEmitOnError": true,
+		"outDir": "dist",
+		"noImplicitAny": true,
+		"target": "es2018",
+		"module": "commonjs",
+		"allowJs": false,
+		"esModuleInterop": true
+	},
+	"include": [
+		"./**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+	]
+}

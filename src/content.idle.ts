@@ -12,7 +12,7 @@ chrome.runtime.sendMessage({ from: 'content', subject: 'showPageAction' });
  *************/
 
 // Listen for messages from the popup.
-chrome.runtime.onMessage.addListener((msg, sender, response) => {
+chrome.runtime.onMessage.addListener((msg, _sender, response) => {
 	//Extension enabled / disabled toggle
 	if (msg.from === 'popup' && msg.subject === 'EnableExtension') {
 		chrome.runtime.sendMessage({
@@ -21,6 +21,7 @@ chrome.runtime.onMessage.addListener((msg, sender, response) => {
 			mode: msg.mode,
 		});
 		const statusInfo = { statusText: msg.mode ? 'enabled' : 'disabled' };
+
 		response(statusInfo);
 	}
 });

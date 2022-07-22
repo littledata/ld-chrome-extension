@@ -1,3 +1,5 @@
+import { SCRIPT_VERSION } from './constants';
+
 /***************************************
 INSTALLATION AND UPDATE DETECTION
 ***************************************/
@@ -24,83 +26,68 @@ INSTALLATION AND UPDATE DETECTION
 PAGE ACTION STATE MANAGEMENT
 ***************************************/
 
-function enableExtension(sender) {
+const enableExtension = (sender: chrome.runtime.MessageSender) => {
+	if (!sender.tab?.id) return;
 	//Initialise the error log as the UI depends on its presence
 	chrome.storage.local.set({ errorLog: JSON.stringify([]) });
 
 	//Turn on the extension
 	setIconStateEnabled(sender.tab.id);
-}
+};
 
-function disableExtension(sender) {
+const disableExtension = (sender: chrome.runtime.MessageSender) => {
+	if (!sender.tab?.id) return;
 	//Turn off the extension
 	setIconStateDisabled(sender.tab.id);
 	clearLocalStorageContent();
-}
+};
 
-function clearLocalStorageContent() {
+const clearLocalStorageContent = () => {
 	//Clear local storage
-	chrome.storage.local.clear(function() {});
+	chrome.storage.local.clear();
 
 	//As this happens on disabling the extension, reset the state value:
 	chrome.storage.local.set({ state: false });
-}
+};
 
-function resetLocalStorageContent() {
+const resetLocalStorageContent = () => {
 	//reset local storage
 	chrome.storage.local.clear();
 	chrome.storage.local.set({ state: true });
 	//and reload the page
-	chrome.tabs.getSelected(null, function(tab) {
-		const code = "window.location.reload();";
-		chrome.tabs.executeScript(tab.id, { code });
+	chrome.tabs.query({ active: true, currentWindow: true }, () => {
+		const code = 'window.location.reload();';
+
+		chrome.tabs.executeScript({ code });
 	});
-}
+};
 
-function resetLocalStorageContent() {
-	//reset local storage
-	chrome.storage.local.clear();
-	chrome.storage.local.set({ state: true });
-	//and reload the page
-	chrome.tabs.getSelected(null, function(tab) {
-		var code = "window.location.reload();";
-		chrome.tabs.executeScript(tab.id, { code: code });
-	});
-}
+const setIconStateEnabled = (tab: number) => {
+	chrome.pageAction.setIcon({ tabId: tab, path: 'images/icon-green-128.png' });
+};
 
-function setIconStateEnabled(tab) {
-	chrome.pageAction.setIcon(
-		{ tabId: tab, path: "images/icon-green-128.png" },
-		() => {}
-	);
-}
+const setIconStateDisabled = (tab: number) => {
+	chrome.pageAction.setIcon({ tabId: tab, path: 'images/icon-grey-128.png' });
+};
 
-function setIconStateDisabled(tab) {
-	chrome.pageAction.setIcon(
-		{ tabId: tab, path: "images/icon-grey-128.png" },
-		() => {}
-	);
-}
-
-function setIconStateError(tab) {
-	chrome.pageAction.setIcon(
-		{ tabId: tab, path: "images/icon-red-128.png" },
-		() => {}
-	);
-}
+const setIconStateError = (tab: number) => {
+	chrome.pageAction.setIcon({ tabId: tab, path: 'images/icon-red-128.png' });
+};
 
 /***************************************
 VALIDATING PAGE DATA
 ***************************************/
 
-function analyseLogData(tabID) {
+const analyseLogData = (tabID: number) => {
 	let pageLog = [];
-	const errorLog = [];
-	chrome.storage.local.get("pageLog", function(result) {
+	const errorLog: Record<string, any>[] = [];
+
+	chrome.storage.local.get('pageLog', (result) => {
 		pageLog = JSON.parse(result.pageLog);
 		if (pageLog.length > 0) {
 			if (pageLog.length === 1) {
 				const errors = analysePage(pageLog[0], tabID, false);
+
 				errorLog.push(errors);
 				chrome.storage.local.set({
 					errorLog: JSON.stringify(errorLog),
@@ -110,29 +97,26 @@ function analyseLogData(tabID) {
 			}
 		}
 	});
-}
+};
 
-function analysePage(page, tabID, bIsJourneyStart, index = 0) {
+const analysePage = (page: Record<string, any>, tabID: number, _bIsJourneyStart: any, index = 0) => {
 	let bPageErrors = false;
-	const errors = {
+	const errors: { step: number; url: string; messages: Record<string, any>[] } = {
 		step: index,
 		url: page.href,
 		messages: [],
 	};
 
-	const clientLen =
-		typeof page.ClientID === "string" ? page.ClientID.length : 0;
-	const cookieLen =
-		typeof page.CookieID === "string" ? page.CookieID.length : 0;
-	const cartJSLen =
-		typeof page.CartClientID === "string" ? page.CartClientID.length : 0;
+	const clientLen = typeof page.ClientID === 'string' ? page.ClientID.length : 0;
+	const cookieLen = typeof page.CookieID === 'string' ? page.CookieID.length : 0;
+	const cartJSLen = typeof page.CartClientID === 'string' ? page.CartClientID.length : 0;
 
 	//CHECK 1 : Is the LittledataLayer missing?
 	if (!page.Littledata.hasLittledataLayer) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE01",
-			message: "LittledataLayer object is missing.",
+			code: 'LDE01',
+			message: 'LittledataLayer object is missing.',
 		});
 	}
 
@@ -140,8 +124,8 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 	if (!page.Littledata.hasTrackingTag) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE02",
-			message: "Littledata Tracking Tag is missing.",
+			code: 'LDE02',
+			message: 'Littledata Tracking Tag is missing.',
 		});
 	}
 
@@ -150,21 +134,22 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 		!(
 			page.Littledata.hasGATrackerJS ||
 			page.Littledata.hasSegmentTrackerJS ||
-			page.Littledata.hasCarthookTrackerJS
+			page.Littledata.hasCarthookTrackerJS ||
+			page.Littledata.hasLDBundle
 		)
 	) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE03",
-			message: "Littledata Tracking JS is missing.",
+			code: 'LDE03',
+			message: 'Littledata Tracking JS is missing.',
 		});
 	}
 
 	//CHECK 4 : Is the app version out of date?
-	if (page.Littledata.version !== "v8.4") {
+	if (page.Littledata.scriptVersion !== SCRIPT_VERSION) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE04",
+			code: 'LDE04',
 			message: `Littledata app version is out of date (${page.Littledata.version}).`,
 		});
 	}
@@ -173,8 +158,8 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 	if (clientLen <= 0) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE05",
-			message: "Missing Client ID from Global GA tracker.",
+			code: 'LDE05',
+			message: 'Missing Client ID from Global GA tracker.',
 		});
 	}
 
@@ -182,8 +167,8 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 	if (cookieLen <= 0) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE06",
-			message: "Missing Client ID from _ga cookie.",
+			code: 'LDE06',
+			message: 'Missing Client ID from _ga cookie.',
 		});
 	}
 
@@ -191,8 +176,8 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 	if (cartJSLen <= 0) {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE07",
-			message: "Missing Client ID from cart.js data.",
+			code: 'LDE07',
+			message: 'Missing Client ID from cart.js data.',
 		});
 	}
 
@@ -201,8 +186,8 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 		if (page.ClientID !== page.CookieID) {
 			bPageErrors = true;
 			errors.messages.push({
-				code: "LDE08A",
-				message: "Client ID does not match _ga Cookie ID.",
+				code: 'LDE08A',
+				message: 'Client ID does not match _ga Cookie ID.',
 			});
 		}
 	}
@@ -211,8 +196,8 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 		if (page.ClientID !== page.CartClientID) {
 			bPageErrors = true;
 			errors.messages.push({
-				code: "LDE08B",
-				message: "Client ID does not match cart.js ID.",
+				code: 'LDE08B',
+				message: 'Client ID does not match cart.js ID.',
 			});
 		}
 	}
@@ -221,22 +206,18 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 		if (page.CartClientID !== page.CookieID) {
 			bPageErrors = true;
 			errors.messages.push({
-				code: "LDE08C",
-				message: "_ga Cookie ID does not match cart.js ID.",
+				code: 'LDE08C',
+				message: '_ga Cookie ID does not match cart.js ID.',
 			});
 		}
 	}
 
 	//CHECK 9 : Missing GA Tracking ID
-	if (
-		page.Littledata.webPropertyID === undefined ||
-		page.Littledata.webPropertyID === ""
-	) {
+	if (page.Littledata.webPropertyID === undefined || page.Littledata.webPropertyID === '') {
 		bPageErrors = true;
 		errors.messages.push({
-			code: "LDE09B",
-			message:
-				"Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.",
+			code: 'LDE09B',
+			message: 'Littledata GA Web Property ID (e.g.: UA-XXXXXX-X) could not be read.',
 		});
 	}
 
@@ -246,17 +227,16 @@ function analysePage(page, tabID, bIsJourneyStart, index = 0) {
 	}
 
 	return errors;
-}
+};
 
-function analyseAllPages(pageLog, tabID) {
-	//let page = []
+const analyseAllPages = (pageLog: Record<string, string>[], tabID: number) => {
 	let bPageErrors = false;
 	const firstPage = pageLog[0];
 	const errorLog = [];
 
 	for (let i = 0; i < pageLog.length; i++) {
 		//Retrieve page info and run its self-contained checks first
-		page = pageLog[i];
+		const page = pageLog[i];
 		const errors = analysePage(page, tabID, i === 0, i);
 
 		//Compare all pages after the first to check the values haven't changed
@@ -265,7 +245,7 @@ function analyseAllPages(pageLog, tabID) {
 			if (page.ClientID !== firstPage.ClientID) {
 				bPageErrors = true;
 				errors.messages.push({
-					code: "LDV01",
+					code: 'LDV01',
 					message: `Page Client ID does not match Client ID of first step (Current: ${page.ClientID} | First: ${firstPage.ClientID}).`,
 				});
 			}
@@ -281,47 +261,42 @@ function analyseAllPages(pageLog, tabID) {
 	if (bPageErrors) {
 		setIconStateError(tabID);
 	}
-}
+};
 
 /***************************************
 MESSAGING FROM CONTENT SCRIPTS
 ***************************************/
 
-chrome.runtime.onMessage.addListener((msg, sender) => {
+chrome.runtime.onMessage.addListener((msg, sender: chrome.runtime.MessageSender) => {
 	console.debug(msg);
-	// First, validate the message's structure.
-	if (msg.from === "content" && msg.subject === "showPageAction") {
-		// Enable the page-action for the requesting tab.
-		chrome.pageAction.show(sender.tab.id);
-	}
-
-	//Clicking the Extension's Page Action
-	if (msg.from === "popup" && msg.subject === "pageActionClicked") {
-		chrome.storage.local.get("errorLog", function(result) {
-			chrome.runtime.sendMessage({
-				from: "background",
-				subject: "updateContent",
-				data: result.errorLog,
-			});
-		});
-	}
-
-	//Clicking the Extension's Reset Button
-	if (msg.from === "popup" && msg.subject === "pageResetClicked") {
-		resetLocalStorageContent();
-	}
-
-	//Turning the extension on and off
-	if (msg.from === "content" && msg.subject === "changeExtensionIcon") {
-		if (msg.mode) {
-			enableExtension(sender);
-		} else {
-			disableExtension(sender);
+	if (msg.from === 'content') {
+		if (msg.subject === 'showPageAction') {
+			// Validate the message's structure.
+			if (sender.tab && sender.tab.id) chrome.pageAction.show(sender.tab.id);
+		} else if (msg.subject === 'savePageLogData') {
+			chrome.storage.local.set({ pageLog: msg.data });
+			if (sender.tab && sender.tab.id) analyseLogData(sender.tab?.id);
+		} else if (msg.subject === 'changeExtensionIcon') {
+			//Turning the extension on and off
+			if (msg.mode) {
+				enableExtension(sender);
+			} else {
+				disableExtension(sender);
+			}
 		}
-	}
-
-	if (msg.from === "content" && msg.subject === "savePageLogData") {
-		chrome.storage.local.set({ pageLog: msg.data });
-		analyseLogData(sender.tab.id);
+	} else if (msg.from === 'popup') {
+		if (msg.subject === 'pageActionClicked') {
+			//Clicking the Extension's Page Action
+			chrome.storage.local.get('errorLog', function (result) {
+				chrome.runtime.sendMessage({
+					from: 'background',
+					subject: 'updateContent',
+					data: result.errorLog,
+				});
+			});
+		} else if (msg.subject === 'pageResetClicked') {
+			//Clicking the Extension's Reset Button
+			resetLocalStorageContent();
+		}
 	}
 });
